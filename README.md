@@ -6,5 +6,8 @@ https://www.amazon.co.jp/WEB-DB-PRESS-Vol-122-%E5%B0%BE%E8%97%A4/dp/4297121190/r
 ### streamlit でデプロイした看護師スケジュールアプリ
 https://share.streamlit.io/kjman678/schedule/main/sched.py
 
+sched.py スケジュールアプリの本体  
+requirements.txt streamlit.share 上にないライブラリを使うために必要  
+
 ### サンプル csv
 https://drive.google.com/file/d/17UIR5XzpUFZ6-hArsWc02JbP3YxEFmZ_/view?usp=sharing
