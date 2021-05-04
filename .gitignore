@@ -1,2 +1,4 @@
 *.csv
 .ipynb_checkpoints
+chemical_products.ipynb
+nurse_schedule.ipynb

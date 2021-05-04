@@ -2,8 +2,28 @@
 from itertools import product
 import pandas as pd
 import streamlit as st
-from mip import BINARY, Model, maximize, xsum
+from mip import BINARY, Model, maximize, xsum, OptimizationStatus
 from more_itertools import pairwise, windowed
+import base64
+
+### サンプルデータのダウンロード
+download=st.sidebar.button('サンプルCSVをダウンロード')
+if download:
+  'サンプルCSV内訳'
+  df_download= pd.DataFrame(
+    [
+     ["佐藤", "休", "", "", "", "", "", "", ""],
+     ["田中", "", "休", "", "", "", "", "", ""],
+     ["鈴木", "", "", "休", "", "", "", "", ""],
+     ["高橋", "", "", "", "", "", "", "", "休"],
+    ]
+)
+  df_download.columns=["Name", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8"]
+  df_download
+  csv = df_download.to_csv(index=False)
+  b64 = base64.b64encode(csv.encode()).decode()  # some strings
+  linko= f'<a href="data:file/csv;base64,{b64}" download="sample.csv">クリックしてcsvをダウンロード</a>'
+  st.markdown(linko, unsafe_allow_html=True)
 
 ### テーブルデータの作成
 shifts = ["日", "夜", "休"] # シフトリスト
@@ -48,12 +68,33 @@ df["Val"] = df.Var.astype(float)
 res = df[df.Val > 0]
 res = res.pivot_table("Shift", "Name", "Day", "first")
 
+### 表示するステータス
+status = ""
+if m.status == OptimizationStatus.OPTIMAL:
+  status = "最適解が算定されました"
+elif m.status == OptimizationStatus.INFEASIBLE:
+  status = "実行不可能でした"
+elif m.status == OptimizationStatus.UNBOUNDED:
+  status = "解が無限に存在します"
+elif m.status == OptimizationStatus.FEASIBLE:
+  status = "整数の実行可能解が見つかりましたが、これが最適解であるかどうかを判断する前に検索が中断されました。"
+elif m.status == OptimizationStatus.INT_INFEASIBLE:
+  status = "整数問題は実行不可能でした"
+elif m.status == OptimizationStatus.NO_SOLUTION_FOUND:
+  status = "整数の実行可能解が見つかりませんでした"
+elif m.status == OptimizationStatus.LOADED:
+  status = "問題はロードされましたが、最適解は実行されませんでした"
+elif m.status == OptimizationStatus.CUTOFF:
+  status = "現在のカットオフに対して実行可能な解決策はありません"
+elif m.status == OptimizationStatus.ERROR:
+  status = "エラーが発生しました"
+
 f"""
 # 看護師のスケジュール作成
 ## 実行結果
-- ステータス：{m.status}
+- ステータス：{status}
 - 希望をかなえた数：{m.objective.x}
 """ # Markdownとして解釈される
 
 f = lambda s: f"color: {'red' * (s == '休')}"
-st.dataframe(res.style.applymap(f)) # 計算結果を出力する
+st.dataframe(res.style.applymap(f), width=500, height=300) # 計算結果を出力する
