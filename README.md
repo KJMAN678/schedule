@@ -11,3 +11,6 @@ requirements.txt streamlit.share 上にないライブラリを使うために�
 
 ### サンプル csv
 https://drive.google.com/file/d/17UIR5XzpUFZ6-hArsWc02JbP3YxEFmZ_/view?usp=sharing
+
+### 改修点についてまとめたブログ
+https://zenn.dev/megane_otoko/articles/039_schedule_optimize
